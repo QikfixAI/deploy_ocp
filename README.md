@@ -278,6 +278,7 @@ You can also access the `Linux Box` that created the `ISO` to monitor the instal
 ```
 ls -ltr /tmp
 -rwxr-xr-x. 1 root root  566 May 21 16:33 monitor_ocp10.king.lab-4.19.2.sh
+-rwxr-xr-x. 1 root root  566 May 21 16:33 fix_certs_ocp10.king.lab-4.19.2.sh
 drwxr-xr-x. 3 root root  189 May 21 16:33 ocp10.king.lab-4.19.2
 ```
 
