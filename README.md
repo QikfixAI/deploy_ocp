@@ -82,18 +82,18 @@ Executing the script
 ```
 % ./deploy_ocp.sh
 You are able to access s4.king.lab and srv05.king.lab with no issues.
-DNS Entry 'api.cluster01.king.lab' is already in use
+DNS Entry 'api.cluster01.king.lab' is available
 #######
 1. Set the domain, default/current is 'king.lab'
 2. Set the cluster name, default/current is 'cluster01'
 3. Set the local subnet CIDR, default/current is '192.168.86.0/24'
 4. List ALL the OpenShift Version available
-5. Set the OpenShift Version, default is 'latest-4.21'
+5. Set the OpenShift Version, default is 'latest-4.22'
+6. Set the VM Description, default is 'VM Description Here'
 
 8. Proceed with the Deployment!
 
 9. Exit
-Type the number:
 ```
 
 Just type 2, and set the new `cluster name`, for instance, let's set `ocp10`
@@ -101,7 +101,7 @@ Just type 2, and set the new `cluster name`, for instance, let's set `ocp10`
 Type the number: 2
 #######
 Setting the Cluster
-CUrrent value: ocp4
+Current value: cluster01
 Please, type the cluster name: ocp10
 New value: ocp10
 DNS Entry 'api.ocp10.king.lab' is available
@@ -110,7 +110,8 @@ DNS Entry 'api.ocp10.king.lab' is available
 2. Set the cluster name, default/current is 'ocp10'
 3. Set the local subnet CIDR, default/current is '192.168.86.0/24'
 4. List ALL the OpenShift Version available
-5. Set the OpenShift Version, default is 'latest-4.21'
+5. Set the OpenShift Version, default is 'latest-4.22'
+6. Set the VM Description, default is 'VM Description Here'
 
 8. Proceed with the Deployment!
 
@@ -149,7 +150,8 @@ DNS Entry 'api.ocp10.king.lab' is available
 2. Set the cluster name, default/current is 'ocp10'
 3. Set the local subnet CIDR, default/current is '192.168.86.0/24'
 4. List ALL the OpenShift Version available
-5. Set the OpenShift Version, default is 'latest-4.21'
+5. Set the OpenShift Version, default is 'latest-4.22'
+6. Set the VM Description, default is 'VM Description Here'
 
 8. Proceed with the Deployment!
 
@@ -164,7 +166,7 @@ Next, I'll set it, by typing 5 and adding/typing/pasting `4.19.2`
 Type the number: 5
 #######
 Setting the OCP Version
-CUrrent value: latest-4.21
+Current value: latest-4.22
 Please, type the OCP Version: 4.19.2
 New value: 4.19.2
 DNS Entry 'api.ocp10.king.lab' is available
@@ -174,6 +176,30 @@ DNS Entry 'api.ocp10.king.lab' is available
 3. Set the local subnet CIDR, default/current is '192.168.86.0/24'
 4. List ALL the OpenShift Version available
 5. Set the OpenShift Version, default is '4.19.2'
+6. Set the VM Description, default is 'VM Description Here'
+
+8. Proceed with the Deployment!
+
+9. Exit
+Type the number:
+```
+
+You can also add a description for this VM, selecting 6
+```
+Type the number: 6
+#######
+Setting the VM Description
+Current value: VM Description Here
+Please, type the VM Description: New VM For Test 123
+New value: New VM For Test 123
+DNS Entry 'api.ocp10.king.lab' is available
+#######
+1. Set the domain, default/current is 'king.lab'
+2. Set the cluster name, default/current is 'ocp10'
+3. Set the local subnet CIDR, default/current is '192.168.86.0/24'
+4. List ALL the OpenShift Version available
+5. Set the OpenShift Version, default is '4.19.2'
+6. Set the VM Description, default is 'New VM For Test 123'
 
 8. Proceed with the Deployment!
 
@@ -238,6 +264,7 @@ DNS Entry 'api.ocp10.king.lab' is already in use
 3. Set the local subnet CIDR, default/current is '192.168.86.0/24'
 4. List ALL the OpenShift Version available
 5. Set the OpenShift Version, default is '4.19.2'
+6. Set the VM Description, default is 'New VM For Test 123'
 
 8. Proceed with the Deployment!
 
@@ -251,6 +278,7 @@ You can also access the `Linux Box` that created the `ISO` to monitor the instal
 ```
 ls -ltr /tmp
 -rwxr-xr-x. 1 root root  566 May 21 16:33 monitor_ocp10.king.lab-4.19.2.sh
+-rwxr-xr-x. 1 root root  566 May 21 16:33 fix_certs_ocp10.king.lab-4.19.2.sh
 drwxr-xr-x. 3 root root  189 May 21 16:33 ocp10.king.lab-4.19.2
 ```
 
@@ -340,6 +368,8 @@ error: failed to create secret secrets "htpass-secret" already exists
 oauth.config.openshift.io/cluster patched (no change)
 clusterrole.rbac.authorization.k8s.io/cluster-admin added: "admin"
 ```
+
+Also, there is a new script called `fix_certs_ocp10.king.lab-4.19.2.sh`. The main purpose of this script is, assuming that your cluster is down for more than 24 hours, the certificates will get expired, and your cluster will not be accessible. To fix that, once you have everything up and running, except for the ability to authenticate on your cluster (and you can check with the monitoring script mentioned above), you can execute the `fix_certs_ocp10.king.lab-4.19.2.sh`. This one will connect to the cluster, using the kubectl config file, will approve all the pending CSR's, and after a couple minutes, your cluster should be again accessible via webUI and also via `oc` command.
 
 
 After that, your `SNO` Cluster will be Up and Running, just waiting for your next steps!
