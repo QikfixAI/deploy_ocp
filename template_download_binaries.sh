@@ -6,7 +6,7 @@ CLUSTER_NAME="<name>"
 OCP_VERSION="<ocp_version>"
 ARCH="<arch>"
 
-DEST_PATH="/tmp/${CLUSTER_NAME}.${DOMAIN}-${OCP_VERSION}"
+DEST_PATH="/data/${CLUSTER_NAME}.${DOMAIN}-${OCP_VERSION}"
 
 if [ -d $DEST_PATH ]; then
   echo "Removing some old stuff"

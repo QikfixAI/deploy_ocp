@@ -5,14 +5,6 @@ if [ -f deploy_ocp.conf ]; then
   source deploy_ocp.conf
 fi
 
-#API_ADDR="api.${CLUSTER_NAME}.${DOMAIN}"
-#API_STATUS=""
-#DEST_PATH="/tmp/$CLUSTER_NAME.${DOMAIN}-${OCP_VERSION}"
-
-# Connect to the Podman Server 
-# Connect to the KVM
-
-
 cleanup()
 {
   rm -vf /tmp/wally.sh
@@ -39,6 +31,12 @@ check_requirements_ssh()
     echo "There is a problem accessing $KVM_SRV via ssh."
     echo "Please, fix it. Exiting ...."
     exit
+  fi
+
+  ssh root@$LNX_SRV "ls -ld /data"
+  if [ $? -ne 0 ]; then
+    echo "Creating /data directory remotely"
+    ssh root@$LNX_SRV "mkdir -v /data"
   fi
 
   echo "You are able to access $LNX_SRV and $KVM_SRV with no issues."
@@ -219,11 +217,11 @@ DOWN_FILE_FINAL="download_binaries.sh"
   sed -i "" "s/<arch>/$ARCH/" $TEMPLATE_DOWN_FILE_NEW
 
   # copy via ssh the final/modified files
-  scp $TEMPLATE_INST_FILE_NEW root@$LNX_SRV:/tmp/$INST_FILE_FINAL
-  scp $TEMPLATE_DOWN_FILE_NEW root@$LNX_SRV:/tmp/$DOWN_FILE_FINAL
+  scp $TEMPLATE_INST_FILE_NEW root@$LNX_SRV:$REMOTE_DATA_DIR/$INST_FILE_FINAL
+  scp $TEMPLATE_DOWN_FILE_NEW root@$LNX_SRV:$REMOTE_DATA_DIR/$DOWN_FILE_FINAL
 
   # Script Execution on the remote Podman Server 
-  ssh root@$LNX_SRV "bash /tmp/$DOWN_FILE_FINAL"
+  ssh root@$LNX_SRV "bash $REMOTE_DATA_DIR/$DOWN_FILE_FINAL"
 
   #echo "AUDIT: Above download_image: $CLUSTER_NAME"
   download_image
@@ -235,8 +233,11 @@ download_image()
 {
   #echo "AUDIT: inside download_image: $CLUSTER_NAME"
   IMAGE_NAME="${CLUSTER_NAME}.${DOMAIN}-${OCP_VERSION}.iso"
-  LOCAL_PATH="/tmp/${CLUSTER_NAME}.${DOMAIN}-${OCP_VERSION}"
+  LOCAL_PATH="$REMOTE_DATA_DIR/${CLUSTER_NAME}.${DOMAIN}-${OCP_VERSION}"
+  # Downloading the image to the local filesystem (under /tmp)
   scp root@$LNX_SRV:$LOCAL_PATH/rhcos-live.iso /tmp/${IMAGE_NAME}
+  #echo "pause here"
+  #read x
 }
 
 
@@ -262,7 +263,7 @@ deploy_new_user_template()
 
   TEMPLATE_USER="template_new_user.sh"
   TEMPLATE_USER_NEW="new_monitor.sh"
-  LOCAL_PATH="/tmp/${CLUSTER_NAME}.${DOMAIN}-${OCP_VERSION}"
+  LOCAL_PATH="$REMOTE_DATA_DIR/${CLUSTER_NAME}.${DOMAIN}-${OCP_VERSION}"
   USER_FINAL="$LOCAL_PATH/create_admin_user.sh"
 
   cp $TEMPLATE_USER $TEMPLATE_USER_NEW
@@ -279,7 +280,7 @@ deploy_monitor_template()
 
   TEMPLATE_MONITOR="template_monitor.sh"
   TEMPLATE_MONITOR_NEW="new_monitor.sh"
-  LOCAL_PATH="/tmp/${CLUSTER_NAME}.${DOMAIN}-${OCP_VERSION}"
+  LOCAL_PATH="$REMOTE_DATA_DIR/${CLUSTER_NAME}.${DOMAIN}-${OCP_VERSION}"
   MONITOR_FINAL="monitor_${CLUSTER_NAME}.${DOMAIN}-${OCP_VERSION}.sh"
   #CONSOLE_URL="console-openshift-console.apps.ocp1.king.lab"
   CONSOLE_URL="console-openshift-console.apps.${CLUSTER_NAME}.${DOMAIN}"
@@ -288,7 +289,7 @@ deploy_monitor_template()
   sed -i "" "s#<remote_dir>#$LOCAL_PATH#" $TEMPLATE_MONITOR_NEW
   sed -i "" "s#<console_url>#$CONSOLE_URL#" $TEMPLATE_MONITOR_NEW
   chmod -v 755 $TEMPLATE_MONITOR_NEW
-  scp $TEMPLATE_MONITOR_NEW root@$LNX_SRV:/tmp/$MONITOR_FINAL
+  scp $TEMPLATE_MONITOR_NEW root@$LNX_SRV:$REMOTE_DATA_DIR/$MONITOR_FINAL
 }
 
 deploy_fix_certs_template()
@@ -297,7 +298,7 @@ deploy_fix_certs_template()
 
   TEMPLATE_MONITOR="template_fix_certs.sh"
   TEMPLATE_MONITOR_NEW="fix_certs_new.sh"
-  LOCAL_PATH="/tmp/${CLUSTER_NAME}.${DOMAIN}-${OCP_VERSION}"
+  LOCAL_PATH="$REMOTE_DATA_DIR/${CLUSTER_NAME}.${DOMAIN}-${OCP_VERSION}"
   MONITOR_FINAL="fix_certs_${CLUSTER_NAME}.${DOMAIN}-${OCP_VERSION}.sh"
   #CONSOLE_URL="console-openshift-console.apps.ocp1.king.lab"
   CONSOLE_URL="console-openshift-console.apps.${CLUSTER_NAME}.${DOMAIN}"
@@ -305,7 +306,7 @@ deploy_fix_certs_template()
   cp $TEMPLATE_MONITOR $TEMPLATE_MONITOR_NEW
   sed -i "" "s#<remote_dir>#$LOCAL_PATH#" $TEMPLATE_MONITOR_NEW
   chmod -v 755 $TEMPLATE_MONITOR_NEW
-  scp $TEMPLATE_MONITOR_NEW root@$LNX_SRV:/tmp/$MONITOR_FINAL
+  scp $TEMPLATE_MONITOR_NEW root@$LNX_SRV:$REMOTE_DATA_DIR/$MONITOR_FINAL
 }
 
 
