@@ -5,8 +5,9 @@ DOMAIN="<domain>"
 CLUSTER_NAME="<name>"
 OCP_VERSION="<ocp_version>"
 ARCH="<arch>"
+REMOTE_FOLDER="<remote_folder>"
 
-DEST_PATH="/tmp/${CLUSTER_NAME}.${DOMAIN}-${OCP_VERSION}"
+DEST_PATH="$REMOTE_FOLDER/${CLUSTER_NAME}.${DOMAIN}-${OCP_VERSION}"
 
 if [ -d $DEST_PATH ]; then
   echo "Removing some old stuff"
@@ -37,7 +38,7 @@ curl -s -L $ISO_URL -o rhcos-live.iso
 
 
 mkdir $DEST_PATH/ocp
-cp /tmp/install-config.yaml $DEST_PATH/ocp
+cp $REMOTE_FOLDER/install-config.yaml $DEST_PATH/ocp
 cd $DEST_PATH
 $DEST_PATH/openshift-install --dir=ocp create single-node-ignition-config
 

@@ -214,7 +214,7 @@ Type the number: 8
 #######
 new_install-config.yaml                              100% 3288     2.7MB/s   00:00
 new_download_binaries.sh                             100% 1533     1.3MB/s   00:00
-mkdir: created directory '/tmp/ocp10.king.lab-4.19.2'
+mkdir: created directory '/data/ocp10.king.lab-4.19.2'
 Downloading the OC
 Value of OCP_VERSION: 4.19.2
 Downloading the openshift-install-linux
@@ -276,7 +276,7 @@ Ok, at this moment, the machine got created under `KVM`, the `DNS` was updated p
 
 You can also access the `Linux Box` that created the `ISO` to monitor the installation. You will see something as below
 ```
-ls -ltr /tmp
+ls -ltr /data
 -rwxr-xr-x. 1 root root  566 May 21 16:33 monitor_ocp10.king.lab-4.19.2.sh
 -rwxr-xr-x. 1 root root  566 May 21 16:33 fix_certs_ocp10.king.lab-4.19.2.sh
 drwxr-xr-x. 3 root root  189 May 21 16:33 ocp10.king.lab-4.19.2
@@ -284,8 +284,8 @@ drwxr-xr-x. 3 root root  189 May 21 16:33 ocp10.king.lab-4.19.2
 
 and
 ```
-# tree /tmp/ocp10.king.lab-4.19.2
-/tmp/ocp10.king.lab-4.19.2
+# tree /data/ocp10.king.lab-4.19.2
+/data/ocp10.king.lab-4.19.2
 ├── create_admin_user.sh
 ├── kubectl
 ├── oc
@@ -305,11 +305,11 @@ and
 3 directories, 13 files
 ```
 
-Basically, the `/tmp/monitor_ocp10.king.lab-4.19.2.sh` is the script that you can execute, and it will be presenting the current state of your cluster. Let me show you an example
+Basically, the `/data/monitor_ocp10.king.lab-4.19.2.sh` is the script that you can execute, and it will be presenting the current state of your cluster. Let me show you an example
 ```
 WebUI: You can Connect
 
-/tmp/ocp6.king.lab-4.19.2/oc get co
+/data/ocp10.king.lab-4.19.2/oc get co
 NAME                                       VERSION   AVAILABLE   PROGRESSING   DEGRADED   SINCE   MESSAGE
 authentication                             4.19.2    True 	 False         False	  5h17m
 baremetal                                  4.19.2    True        False         False	  8h
@@ -346,23 +346,23 @@ operator-lifecycle-manager-packageserver   4.19.2    True        False         F
 service-ca                                 4.19.2    True        False         False	  8h
 storage                                    4.19.2    True        False         False	  8h
 
-/tmp/ocp6.king.lab-4.19.2/oc get clusterversion
+/data/ocp10.king.lab-4.19.2/oc get clusterversion
 NAME	  VERSION   AVAILABLE   PROGRESSING   SINCE   STATUS
 version   4.19.2    True        False         8h      Cluster version is 4.19.2
 
-/tmp/ocp6.king.lab-4.19.2/oc get nodes
+/data/ocp10.king.lab-4.19.2/oc get nodes
 NAME                   STATUS   ROLES                         AGE   VERSION
-ocpsrv.ocp6.king.lab   Ready    control-plane,master,worker   8h    v1.32.5
+ocpsrv.ocp10.king.lab   Ready    control-plane,master,worker   8h    v1.32.5
 
 1
-/tmp/ocp6.king.lab-4.19.2/oc get pods -A | grep -v -E "( Completed | Running )"
+/data/ococp10p6.king.lab-4.19.2/oc get pods -A | grep -v -E "( Completed | Running )"
 NAMESPACE                                          NAME                                                         READY   STATUS      RESTARTS         AGE
-openshift-kube-controller-manager                  installer-2-ocpsrv.ocp6.king.lab                             0/1     Error       0                8h
+openshift-kube-controller-manager                  installer-2-ocpsrv.ocp10.king.lab                             0/1     Error       0                8h
 ```
 
-and the `/tmp/ocp10.king.lab-4.19.2/create_admin_user.sh` is the script that will create a new administrative user in your `SNO`. Please, execute this script once your installation is finished.
+and the `/data/ocp10.king.lab-4.19.2/create_admin_user.sh` is the script that will create a new administrative user in your `SNO`. Please, execute this script once your installation is finished.
 ```
-./ocp6.king.lab-4.19.2/create_admin_user.sh
+./ocp10.king.lab-4.19.2/create_admin_user.sh
 Adding password for user admin
 error: failed to create secret secrets "htpass-secret" already exists
 oauth.config.openshift.io/cluster patched (no change)
