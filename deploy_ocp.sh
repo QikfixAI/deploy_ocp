@@ -33,7 +33,7 @@ check_requirements_ssh()
     exit
   fi
 
-  ssh root@$LNX_SRV "ls -ld /data"
+  ssh root@$LNX_SRV "ls -ld /data" &>/dev/null
   if [ $? -ne 0 ]; then
     echo "Creating /data directory remotely"
     ssh root@$LNX_SRV "mkdir -v /data"
@@ -204,6 +204,7 @@ DOWN_FILE_FINAL="download_binaries.sh"
   sed -i "" "s#<ssh_key>#$SSH_KEY#" $TEMPLATE_INST_FILE_NEW
   sed -i "" "s#/dev/disk/by-id/<disk_id>#/dev/vda#" $TEMPLATE_INST_FILE_NEW
 
+
   # Download Template Section
   TEMPLATE_DOWN_FILE_NEW="new_download_binaries.sh"
   
@@ -215,6 +216,9 @@ DOWN_FILE_FINAL="download_binaries.sh"
   sed -i "" "s/<name>/$CLUSTER_NAME/" $TEMPLATE_DOWN_FILE_NEW
   sed -i "" "s/<ocp_version>/$OCP_VERSION/" $TEMPLATE_DOWN_FILE_NEW
   sed -i "" "s/<arch>/$ARCH/" $TEMPLATE_DOWN_FILE_NEW
+
+  # To set the directory that will store all the files
+  sed -i "" "s#<remote_folder>#$REMOTE_DATA_DIR#" $TEMPLATE_DOWN_FILE_NEW
 
   # copy via ssh the final/modified files
   scp $TEMPLATE_INST_FILE_NEW root@$LNX_SRV:$REMOTE_DATA_DIR/$INST_FILE_FINAL
@@ -272,6 +276,8 @@ deploy_new_user_template()
   sed -i "" "s#<password>#$PASSWORD#" $TEMPLATE_USER_NEW
   chmod -v 755 $TEMPLATE_USER_NEW
   scp $TEMPLATE_USER_NEW root@$LNX_SRV:$USER_FINAL
+  #echo "pausing here"
+  #read x
 }
 
 deploy_monitor_template()
